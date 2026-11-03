@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f7f4">
+  <meta name="description" content="Administrasi peminjaman alat laboratorium fisika.">
+  <title>Labora — Masuk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=20261103b">
+  <script src="js/config.js?v=20261103b" defer></script>
+  <script src="js/storage.js?v=20261103b" defer></script>
+  <script src="js/auth.js?v=20261103b" defer></script>
+</head>
+<body>
+  <main id="auth-view" class="auth-stage">
+    <section id="auth-card" class="auth-card" aria-labelledby="auth-title">
+      <a class="brand auth-brand" href="index.html" aria-label="Labora">
+        <span class="brand-mark" aria-hidden="true">L</span>
+        <span>labora<span class="brand-dot">.</span></span>
+      </a>
+      <div id="login-panel">
+        <div class="auth-heading">
+          <span class="eyebrow">ADMINISTRASI LAB FISIKA</span>
+          <h1 id="auth-title" tabindex="-1">Masuk</h1>
+        </div>
+        <form id="login-form" class="auth-form">
+          <div class="field">
+            <label for="login-id">ID pengguna</label>
+            <input id="login-id" name="username" autocomplete="username" placeholder="Masukkan ID" required>
+          </div>
+          <div class="field">
+            <label for="login-password">Password</label>
+            <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Masukkan password" required>
+          </div>
+          <p id="login-error" class="form-error" role="alert" hidden></p>
+          <button class="button button-primary button-wide" type="submit">Masuk <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="auth-switch">Belum punya akun? <button type="button" class="text-button" data-auth-view="register">Daftar sebagai siswa</button></p>
+      </div>
+
+      <div id="register-panel" hidden>
+        <div class="auth-heading">
+          <span class="eyebrow">AKUN SISWA</span>
+          <h1 id="register-title" tabindex="-1">Buat akun</h1>
+        </div>
+        <form id="register-form" class="auth-form">
+          <div class="field">
+            <label for="register-name">Nama lengkap</label>
+            <input id="register-name" name="name" autocomplete="name" placeholder="Nama sesuai identitas" required maxlength="80">
+          </div>
+          <div class="field">
+            <label for="register-id">ID siswa</label>
+            <input id="register-id" name="username" autocomplete="username" placeholder="NIS atau NISN" required minlength="3" maxlength="32">
+          </div>
+          <div class="field">
+            <label for="register-class">Kelas</label>
+            <input id="register-class" name="className" placeholder="Contoh: XII IPA 1" maxlength="40">
+          </div>
+          <div class="field">
+            <label for="register-password">Password</label>
+            <input id="register-password" name="password" type="password" autocomplete="new-password" placeholder="Minimal 6 karakter" required minlength="6">
+          </div>
+          <div class="field">
+            <label for="register-confirm">Ulangi password</label>
+            <input id="register-confirm" name="confirmPassword" type="password" autocomplete="new-password" placeholder="Ulangi password" required minlength="6">
+          </div>
+          <p id="register-error" class="form-error" role="alert" hidden></p>
+          <button class="button button-primary button-wide" type="submit">Buat akun <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="auth-switch">Sudah punya akun? <button type="button" class="text-button" data-auth-view="login">Kembali masuk</button></p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
