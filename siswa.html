@@ -9,14 +9,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261103c">
-  <script src="js/diagnostic.js?v=20261103c" defer></script>
-  <script src="js/config.js?v=20261103c" defer></script>
-  <script src="js/storage.js?v=20261103c" defer></script>
-  <script src="js/script.js?v=20261103c" defer></script>
+  <link rel="stylesheet" href="css/style.css?v=20261103h">
+  <script src="js/diagnostic.js?v=20261103d" defer></script>
+  <script src="js/config.js?v=20261103d" defer></script>
+  <script src="js/storage.js?v=20261103d" defer></script>
+  <script src="js/script.js?v=20261103g" defer></script>
 </head>
 <body data-role="siswa">
   <div id="app-view" class="app-shell">
+    <button id="sidebar-backdrop" class="sidebar-backdrop" type="button" aria-label="Tutup menu" tabindex="-1" hidden></button>
     <aside class="sidebar">
       <a class="brand sidebar-brand" href="siswa.html" aria-label="Labora">
         <span class="brand-mark" aria-hidden="true">L</span>
@@ -34,6 +35,7 @@
     </aside>
     <section class="main-area">
       <header class="topbar">
+        <button id="menu-toggle" class="menu-toggle" type="button" aria-label="Buka menu" aria-controls="sidebar-nav" aria-expanded="false"><span></span><span></span><span></span></button>
         <div class="breadcrumb"><a href="siswa.html">Labora</a><span aria-hidden="true">/</span><strong id="breadcrumb-current">Dashboard</strong></div>
         <div class="topbar-meta"><span id="sync-indicator" class="sync-indicator">Menyiapkan sesi…</span><span class="online-dot" aria-hidden="true"></span><span id="topbar-role">Siswa</span><a id="logout-button" class="logout-button" href="index.html?logout=1" aria-label="Keluar dari akun">Keluar <span aria-hidden="true">↗</span></a></div>
       </header>

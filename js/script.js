@@ -131,6 +131,16 @@
     window.LaboraAppReady = true;
   }
 
+  function setSidebarOpen(open) {
+    const toggle = $('#menu-toggle');
+    const backdrop = $('#sidebar-backdrop');
+    if (!toggle || !backdrop) return;
+    document.body.classList.toggle('sidebar-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Tutup menu' : 'Buka menu');
+    backdrop.hidden = !open;
+  }
+
   function heading(kicker, title, description, extra) {
     return '<div class="page-heading"><div><span class="eyebrow">' + kicker + '</span><h1>' + title +
       '</h1><p>' + description + '</p></div>' + (extra || '<span class="date-label">' +
@@ -171,6 +181,22 @@
       ? { dashboard: renderLaboranDashboard, approvals: renderApprovals, inventory: renderInventory, 'tool-form': renderToolForm, accounts: renderAccounts, history: renderHistory }
       : { dashboard: renderStudentDashboard, borrow: renderBorrow, 'my-loans': renderMyLoans, profile: renderProfile };
     $('#page-content').innerHTML = (pages[page] || pages.dashboard)();
+    addMobileTableLabels();
+  }
+
+  function addMobileTableLabels() {
+    const content = $('#page-content');
+    if (!content) return;
+    content.querySelectorAll('.table-wrap table').forEach((table) => {
+      const labels = Array.from(table.querySelectorAll('thead th'), (cell) => cell.textContent.trim());
+      table.querySelectorAll('tbody tr').forEach((row) => {
+        Array.from(row.children).forEach((cell, index) => {
+          if (cell.tagName === 'TD' && !cell.classList.contains('table-empty')) {
+            cell.dataset.label = labels[index] || '';
+          }
+        });
+      });
+    });
   }
 
   function loanRows(rows, laboran) {
@@ -487,6 +513,15 @@
   }
 
   document.addEventListener('click', async (event) => {
+    if (event.target.closest('#menu-toggle')) {
+      setSidebarOpen(!document.body.classList.contains('sidebar-open'));
+      return;
+    }
+    if (event.target.closest('#sidebar-backdrop')) {
+      setSidebarOpen(false);
+      return;
+    }
+
     if (event.target.closest('#logout-button')) {
       event.preventDefault();
       store.setSession(null);
@@ -499,6 +534,7 @@
       event.preventDefault();
       page = pageLink.dataset.page;
       editId = '';
+      setSidebarOpen(false);
       showApp();
       return;
     }
@@ -539,6 +575,13 @@
     }
   });
 
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && document.body.classList.contains('sidebar-open')) {
+      setSidebarOpen(false);
+      $('#menu-toggle')?.focus();
+    }
+  });
+
   $('#page-content').addEventListener('input', (event) => {
     if (event.target.id === 'catalog-search') {
       const term = norm(event.target.value);
@@ -549,6 +592,7 @@
       const term = norm(event.target.value);
       const rows = tools.filter((tool) => norm(tool.name).includes(term) || norm(tool.category).includes(term));
       $('#inventory-rows').innerHTML = inventoryRows(rows);
+      addMobileTableLabels();
     }
   });
 
@@ -580,6 +624,7 @@
       const status = event.target.value;
       const rows = loans.slice().reverse().filter((loan) => status === 'all' || loan.status === status);
       $('#history-rows').innerHTML = historyRows(rows);
+      addMobileTableLabels();
     }
   });
 
