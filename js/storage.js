@@ -137,7 +137,8 @@
     }
 
     if (action === 'updateProfile') {
-      const session = demoSession(payload, 'siswa');
+      const session = demoSession(payload);
+      if (!['laboran', 'siswa'].includes(session.role)) throw new Error('Peran akun tidak dikenali.');
       const account = findUser(session.username);
       const name = String(payload.name || '').trim();
       const className = String(payload.className || '').trim();

@@ -101,7 +101,7 @@
           ['accounts', '♙', 'Akun'],
           ['history', '▤', 'Riwayat']
         ]
-      : [['dashboard', '⌂', 'Dashboard'], ['borrow', '+', 'Pinjam alat'], ['my-loans', '▤', 'Peminjaman saya'], ['profile', '♙', 'Profil']];
+      : [['dashboard', '⌂', 'Dashboard'], ['borrow', '+', 'Pinjam alat'], ['my-loans', '▤', 'Peminjaman saya']];
   }
 
   function showApp() {
@@ -116,7 +116,7 @@
     $('#app-view').hidden = false;
     const items = navigation();
     const activePage = page === 'tool-form' ? 'inventory' : page;
-    if (!items.some((item) => item[0] === activePage)) page = 'dashboard';
+    if (!items.some((item) => item[0] === activePage) && activePage !== 'profile') page = 'dashboard';
     const navPage = page === 'tool-form' ? 'inventory' : page;
     $('#sidebar-nav').innerHTML = items.map(([id, icon, label, count]) =>
       '<a class="nav-link ' + (navPage === id ? 'active' : '') + '" href="#' + id + '" data-page="' + id + '" ' +
@@ -126,6 +126,13 @@
     $('#sidebar-name').textContent = user.name;
     $('#sidebar-role').textContent = user.role === 'laboran' ? 'Guru / Laboran' : 'Siswa';
     $('#sidebar-avatar').textContent = initials(user.name);
+    const profileButton = $('#sidebar-profile-button');
+    if (profileButton) {
+      profileButton.classList.toggle('active', page === 'profile');
+      profileButton.setAttribute('aria-label', 'Buka profil ' + user.name);
+      if (page === 'profile') profileButton.setAttribute('aria-current', 'page');
+      else profileButton.removeAttribute('aria-current');
+    }
     $('#topbar-role').textContent = user.role === 'laboran' ? 'Guru / Laboran' : 'Siswa';
     renderPage();
     window.LaboraAppReady = true;
@@ -178,10 +185,21 @@
     $('#breadcrumb-current').textContent = names[page] || 'Dashboard';
     const laboran = user.role === 'laboran';
     const pages = laboran
-      ? { dashboard: renderLaboranDashboard, approvals: renderApprovals, inventory: renderInventory, 'tool-form': renderToolForm, accounts: renderAccounts, history: renderHistory }
+      ? { dashboard: renderLaboranDashboard, approvals: renderApprovals, inventory: renderInventory, 'tool-form': renderToolForm, accounts: renderAccounts, history: renderHistory, profile: renderProfile }
       : { dashboard: renderStudentDashboard, borrow: renderBorrow, 'my-loans': renderMyLoans, profile: renderProfile };
     $('#page-content').innerHTML = (pages[page] || pages.dashboard)();
     addMobileTableLabels();
+    animatePageContent();
+  }
+
+  function animatePageContent() {
+    const content = $('#page-content');
+    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!content || reduceMotion || typeof content.animate !== 'function') return;
+    content.animate(
+      [{ opacity: 0.72, transform: 'translateY(6px)' }, { opacity: 1, transform: 'translateY(0)' }],
+      { duration: 180, easing: 'cubic-bezier(.2, .7, .2, 1)' }
+    );
   }
 
   function addMobileTableLabels() {
@@ -394,10 +412,12 @@
   }
 
   function renderProfile() {
-    return heading('AKUN SAYA', 'Profil', 'Data profil tersimpan pada tab Akun Siswa.') +
-      '<section class="profile-layout"><div class="profile-card"><div class="profile-avatar">' + esc(initials(user.name)) + '</div><span class="eyebrow">SISWA</span><h2>' + esc(user.name) + '</h2><p>ID ' + esc(user.username) + '</p></div>' +
+    const roleLabel = user.role === 'laboran' ? 'GURU / LABORAN' : 'SISWA';
+    const sheetName = user.role === 'laboran' ? 'Akun Guru-Laboran' : 'Akun Siswa';
+    return heading('AKUN SAYA', 'Profil', 'Data profil tersimpan pada tab ' + sheetName + '.') +
+      '<section class="profile-layout"><div class="profile-card"><div class="profile-avatar">' + esc(initials(user.name)) + '</div><span class="eyebrow">' + roleLabel + '</span><h2>' + esc(user.name) + '</h2><p>ID ' + esc(user.username) + '</p></div>' +
       '<section class="panel"><div class="panel-heading"><div><h2>Informasi profil</h2><p>Perbarui nama atau kelas.</p></div></div><div class="panel-body">' +
-      '<form id="profile-form" class="profile-form"><div class="field"><label for="profile-id">ID siswa</label><input id="profile-id" value="' + esc(user.username) + '" disabled></div>' +
+      '<form id="profile-form" class="profile-form"><div class="field"><label for="profile-id">ID pengguna</label><input id="profile-id" value="' + esc(user.username) + '" disabled></div>' +
       '<div class="field"><label for="profile-name">Nama lengkap</label><input id="profile-name" name="name" value="' + esc(user.name) + '" maxlength="80" required></div>' +
       '<div class="field"><label for="profile-class">Kelas</label><input id="profile-class" name="className" value="' + esc(user.className || '') + '" maxlength="40"></div>' +
       '<button class="button button-primary" type="submit">Simpan profil</button></form></div></section></section>';
@@ -536,6 +556,8 @@
       editId = '';
       setSidebarOpen(false);
       showApp();
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
       return;
     }
 
@@ -642,7 +664,7 @@
         });
         await refresh(false);
         showApp();
-        toast('Profil tersimpan pada tab Akun Siswa.');
+        toast('Profil tersimpan pada tab ' + (user.role === 'laboran' ? 'Akun Guru-Laboran.' : 'Akun Siswa.'));
       } catch (error) {
         toast(error.message);
       }

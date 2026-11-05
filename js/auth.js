@@ -35,6 +35,14 @@
     (register ? $('#register-title') : $('#auth-title')).focus();
     $('#login-error').hidden = true;
     $('#register-error').hidden = true;
+    const panel = register ? $('#register-panel') : $('#login-panel');
+    if (panel && typeof panel.animate === 'function' &&
+        !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+      panel.animate(
+        [{ opacity: 0.7, transform: 'translateY(5px)' }, { opacity: 1, transform: 'translateY(0)' }],
+        { duration: 170, easing: 'ease-out' }
+      );
+    }
   }
 
   $('#login-form').addEventListener('submit', async (event) => {

@@ -5,41 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f3f7f4">
   <meta name="description" content="Dashboard Labora untuk guru dan laboran.">
-  <title>SIPENTUL.9 — Dashboard Guru / Laboran</title>
+  <title>Labora — Dashboard Guru / Laboran</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261103h">
+  <link rel="stylesheet" href="css/style.css?v=20261105d">
+  <link rel="icon" href="img/logo-sipentul.png">
   <script src="js/diagnostic.js?v=20261103d" defer></script>
   <script src="js/config.js?v=20261103d" defer></script>
-  <script src="js/storage.js?v=20261103d" defer></script>
-  <script src="js/script.js?v=20261103g" defer></script>
+  <script src="js/storage.js?v=20261105a" defer></script>
+  <script src="js/script.js?v=20261105c" defer></script>
 </head>
 <body data-role="laboran">
   <div id="app-view" class="app-shell">
     <button id="sidebar-backdrop" class="sidebar-backdrop" type="button" aria-label="Tutup menu" tabindex="-1" hidden></button>
     <aside class="sidebar">
       <a class="brand sidebar-brand" href="laboran.html" aria-label="Labora">
-        <span class="brand-mark" aria-hidden="true">L</span>
-        <span>SIPENTUL<span class="brand-dot">.</span>9</span>
+        <img src="img/logo-sipentul.png" alt="logo-sipentul">
+        <span class="brand-copy"><span class="brand-copy-name">SIPENTUL<span class="brand-dot">.</span>9</span><small>sistem peminjaman tools dan alat</small></span>
       </a>
       <div class="side-label">MENU</div>
       <nav id="sidebar-nav" class="side-nav" aria-label="Navigasi utama"></nav>
-      <div class="sidebar-account">
-        <div id="sidebar-avatar" class="avatar" aria-hidden="true">L</div>
-        <div class="sidebar-account-copy">
+      <button id="sidebar-profile-button" class="sidebar-account sidebar-account-button" type="button" data-page="profile" aria-label="Buka profil akun">
+        <span id="sidebar-avatar" class="avatar" aria-hidden="true">L</span>
+        <span class="sidebar-account-copy">
           <strong id="sidebar-name">Pengguna</strong>
           <span id="sidebar-role">Guru / Laboran</span>
-        </div>
-      </div>
+        </span>
+      </button>
     </aside>
     <section class="main-area">
       <header class="topbar">
         <button id="menu-toggle" class="menu-toggle" type="button" aria-label="Buka menu" aria-controls="sidebar-nav" aria-expanded="false"><span></span><span></span><span></span></button>
-        <div class="breadcrumb"><a href="laboran.html">SIPENTUL.9</a><span aria-hidden="true">/</span><strong id="breadcrumb-current">Dashboard</strong></div>
+        <div class="breadcrumb"><a href="laboran.html">Labora</a><span aria-hidden="true">/</span><strong id="breadcrumb-current">Dashboard</strong></div>
         <div class="topbar-meta"><span id="sync-indicator" class="sync-indicator">Menyiapkan sesi…</span><span class="online-dot" aria-hidden="true"></span><span id="topbar-role">Guru / Laboran</span><a id="logout-button" class="logout-button" href="index.html?logout=1" aria-label="Keluar dari akun">Keluar <span aria-hidden="true">↗</span></a></div>
       </header>
-      <main id="page-content" class="page-content" tabindex="-1"><p class="loading-state">Memuat dashboard laboran…</p></main>
+      <main id="page-content" class="page-content" tabindex="-1"><p class="loading-state">Memuat dashboard laboran… Jika tetap tampil, periksa file di folder js.</p></main>
     </section>
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>

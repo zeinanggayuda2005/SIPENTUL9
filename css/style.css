@@ -19,6 +19,7 @@
   text-rendering: optimizeLegibility;
 }
 * { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body { min-width: 320px; min-height: 100vh; margin: 0; background: var(--canvas); }
 button, input, select { font: inherit; }
 button { cursor: pointer; }
@@ -27,6 +28,9 @@ a { color: inherit; text-decoration: none; }
 [hidden] { display: none !important; }
 :focus-visible { outline: 3px solid #75bc98; outline-offset: 2px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; font: 800 23px Manrope, sans-serif; letter-spacing: -1.1px; color: #1b3027; }
+.brand-copy { display: grid; min-width: 0; gap: 3px; letter-spacing: normal; }
+.brand-copy-name { display: block; font: inherit; line-height: 1; letter-spacing: -1.1px; }
+.brand-copy small { display: block; color: #87948c; font: 500 9px/1.25 "DM Sans", sans-serif; letter-spacing: 0; white-space: nowrap; }
 .brand img { width: 36px; height: 36px; }
 .brand-mark { display: grid; width: 36px; height: 36px; flex: 0 0 auto; place-items: center; border-radius: 11px; color: #fff; background: var(--green); font: 800 19px Manrope, sans-serif; letter-spacing: -1px; }
 .brand-dot { color: #37a87a; }
@@ -56,6 +60,7 @@ a { color: inherit; text-decoration: none; }
 }
 .auth-stage { display: grid; min-height: 100svh; place-items: center; padding: 24px; background: radial-gradient(circle at 12% 12%, #e5f2e9 0, transparent 34%), radial-gradient(circle at 90% 90%, #e8f0ed 0, transparent 32%), #f3f7f4; }
 .auth-card { width: min(100%, 440px); padding: 38px 42px 30px; border: 1px solid #e7ede9; border-radius: 22px; background: #fff; box-shadow: 0 24px 70px rgba(33, 66, 48, .1); }
+.auth-card { animation: card-arrive .32s cubic-bezier(.2, .7, .2, 1) both; }
 .auth-brand { margin-bottom: 36px; }
 .auth-heading { margin-bottom: 25px; }
 .eyebrow { display: block; color: #83918a; font-size: 10px; font-weight: 700; letter-spacing: 1.35px; }
@@ -69,6 +74,7 @@ a { color: inherit; text-decoration: none; }
 .field input::placeholder { color: #a5b0aa; }
 .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 38px; padding: 10px 14px; border: 0; border-radius: 8px; font-size: 12px; font-weight: 700; transition: transform .16s ease, background .16s ease, box-shadow .16s ease; }
 .button:hover { transform: translateY(-1px); }
+.button:active, .logout-button:active, .menu-toggle:active, .nav-link:active { transform: scale(.98); }
 .button-primary { color: #fff; background: var(--green); box-shadow: 0 5px 12px #176b5323; }
 .button-primary:hover { background: var(--green-dark); }
 .button-wide { width: 100%; min-height: 46px; margin-top: 3px; }
@@ -89,6 +95,7 @@ a { color: inherit; text-decoration: none; }
 .app-shell { min-height: 100vh; }
 .sidebar { position: fixed; z-index: 3; inset: 0 auto 0 0; display: flex; width: 248px; flex-direction: column; padding: 25px 16px 17px; border-right: 1px solid var(--line); background: #fff; }
 .sidebar-brand { padding: 0 9px 43px; }
+.sidebar-brand .brand-copy small { font-size: 8px; }
 .side-label { padding: 0 12px 12px; color: #9aa69f; font-size: 9px; font-weight: 700; letter-spacing: 1.1px; }
 .side-nav { display: grid; gap: 5px; }
 .nav-link { display: flex; align-items: center; gap: 11px; min-height: 42px; padding: 10px 12px; border-radius: 9px; color: #718078; font-size: 12px; font-weight: 600; transition: color .15s, background .15s; }
@@ -97,6 +104,9 @@ a { color: inherit; text-decoration: none; }
 .nav-icon { display: grid; width: 18px; place-items: center; font-size: 16px; }
 .nav-count { display: grid; min-width: 19px; height: 19px; margin-left: auto; place-items: center; border-radius: 12px; color: #986d2c; background: #fff0d9; font-size: 9px; font-weight: 800; }
 .sidebar-account { display: flex; align-items: center; gap: 10px; margin-top: auto; padding: 14px 5px 0; border-top: 1px solid var(--line); }
+.sidebar-account-button { width: 100%; border: 0; border-top: 1px solid var(--line); color: inherit; background: transparent; font: inherit; text-align: left; cursor: pointer; }
+.sidebar-account-button:hover, .sidebar-account-button.active { border-radius: 10px; background: #f4f8f5; }
+.sidebar-account-button:focus-visible { outline-offset: 4px; }
 .avatar, .profile-avatar { display: grid; flex: 0 0 auto; place-items: center; border-radius: 50%; color: #176b53; background: #e8f3ed; font-weight: 800; }
 .avatar { width: 34px; height: 34px; font-size: 11px; }
 .sidebar-account-copy { display: grid; min-width: 0; gap: 3px; }
@@ -216,6 +226,15 @@ tbody tr:hover { background: #fcfdfc; }
 .toast { position: fixed; z-index: 6; right: 23px; bottom: 22px; max-width: min(380px, calc(100vw - 32px)); padding: 12px 16px; border: 1px solid #285c48; border-radius: 10px; color: #fff; background: #173f32; box-shadow: 0 12px 30px #183f3430; font-size: 11px; opacity: 0; pointer-events: none; transform: translateY(9px); transition: opacity .2s, transform .2s; }
 .toast.visible { opacity: 1; transform: translateY(0); }
 
+@keyframes card-arrive {
+  from { opacity: 0; transform: translateY(9px) scale(.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes backdrop-arrive {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 @media (max-width: 1120px) {
   .sidebar { width: 215px; }
   .main-area { margin-left: 215px; }
@@ -231,7 +250,7 @@ tbody tr:hover { background: #fcfdfc; }
 @media (max-width: 900px) {
   html, body { overflow-x: hidden; }
   .auth-card { padding: 31px 26px 26px; }
-  .sidebar { position: fixed; z-index: 8; inset: 0 auto 0 0; display: flex; width: min(82vw, 300px); height: 100vh; height: 100dvh; flex-direction: column; padding: 22px 16px 16px; border-right: 1px solid var(--line); border-bottom: 0; box-shadow: 16px 0 40px rgba(20, 44, 33, .13); transform: translateX(-105%); transition: transform .22s ease; }
+  .sidebar { position: fixed; z-index: 8; inset: 0 auto 0 0; display: flex; width: min(82vw, 300px); height: 100vh; height: 100dvh; flex-direction: column; padding: 22px 16px 16px; border-right: 1px solid var(--line); border-bottom: 0; box-shadow: 16px 0 40px rgba(20, 44, 33, .13); transform: translateX(-105%); transition: transform .24s cubic-bezier(.2, .75, .25, 1); will-change: transform; }
   .sidebar-brand { padding: 0 7px 34px; font-size: 19px; }
   .sidebar-brand img { width: 30px; height: 30px; }
   .sidebar-brand .brand-mark { width: 30px; height: 30px; font-size: 16px; }
@@ -241,7 +260,7 @@ tbody tr:hover { background: #fcfdfc; }
   .nav-icon { font-size: 16px; }
   .nav-count { min-width: 19px; height: 19px; font-size: 9px; }
   .sidebar-account { display: flex; margin-top: auto; }
-  .sidebar-backdrop:not([hidden]) { position: fixed; z-index: 7; inset: 0; display: block; width: 100%; height: 100%; border: 0; background: rgba(17, 32, 25, .42); }
+  .sidebar-backdrop:not([hidden]) { position: fixed; z-index: 7; inset: 0; display: block; width: 100%; height: 100%; border: 0; background: rgba(17, 32, 25, .42); animation: backdrop-arrive .2s ease both; }
   body.sidebar-open { overflow: hidden; }
   body.sidebar-open .sidebar { transform: translateX(0); }
   .menu-toggle { display: inline-flex; width: 38px; height: 38px; flex: 0 0 auto; flex-direction: column; align-items: center; justify-content: center; gap: 4px; margin-right: 10px; padding: 0; border: 1px solid var(--line); border-radius: 9px; color: var(--green); background: #fff; }
@@ -359,6 +378,16 @@ tbody tr:hover { background: #fcfdfc; }
   .equipment-bottom { align-items: center; flex-direction: row; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
+
 /* Large desktop displays. */
 @media (min-width: 1440px) {
   .sidebar { width: 268px; padding-right: 20px; padding-left: 20px; }
@@ -414,6 +443,7 @@ tbody tr:hover { background: #fcfdfc; }
   }
   .auth-brand { margin-bottom: 26px; font-size: 21px; }
   .auth-brand .brand-mark { width: 34px; height: 34px; }
+  .auth-brand .brand-copy small { font-size: 8px; }
   .auth-heading { margin-bottom: 21px; }
   .auth-heading .eyebrow { font-size: 9px; letter-spacing: 1.1px; }
   .auth-heading h1 { font-size: 27px; }
