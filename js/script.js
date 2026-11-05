@@ -289,12 +289,43 @@
       : '<span class="' + className + ' photo-placeholder" aria-hidden="true">⌘</span>';
   }
 
+  function categories() {
+    return Array.from(new Set(['K1', 'K2', 'K3', ...tools.map((tool) => String(tool.category || '').trim()).filter(Boolean)]));
+  }
+
+  function categoryFilterButtons(group) {
+    const options = ['all', ...categories()];
+    return '<div class="category-filter-group" role="group" aria-label="Filter kategori">' +
+      '<span class="category-filter-label">Kategori</span><div class="category-filter-options">' +
+      options.map((category, index) => '<button class="category-filter-button' + (index === 0 ? ' active' : '') + '" type="button" data-category-filter="' + group + '" data-category-value="' + esc(category) + '" aria-pressed="' + (index === 0 ? 'true' : 'false') + '">' + (category === 'all' ? 'Semua' : esc(category)) + '</button>').join('') +
+      '</div></div>';
+  }
+
+  function selectedCategory(group) {
+    const selected = $('#page-content [data-category-filter="' + group + '"].active');
+    return selected ? selected.dataset.categoryValue : 'all';
+  }
+
+  function filteredTools(category, searchTerm) {
+    const term = norm(searchTerm);
+    return tools.filter((tool) => (category === 'all' || norm(tool.category) === norm(category)) &&
+      (norm(tool.name).includes(term) || norm(tool.category).includes(term)));
+  }
+
+  function toolCategoryOptions(selected) {
+    const current = String(selected || '').trim();
+    const choices = ['K1', 'K2', 'K3'];
+    if (current && !choices.includes(current)) choices.push(current);
+    return '<option value="" disabled ' + (current ? '' : 'selected') + '>Pilih kategori</option>' + choices
+      .map((category) => '<option value="' + esc(category) + '" ' + (category === current ? 'selected' : '') + '>' + esc(category) + '</option>').join('');
+  }
+
   function inventoryRows(rows) {
-    if (!rows.length) return emptyRow(6, 'Alat tidak ditemukan', 'Coba kata pencarian lain.');
+    if (!rows.length) return emptyRow(7, 'Alat tidak ditemukan', 'Coba kata pencarian lain.');
     return rows.map((tool) => {
       const status = stateOf(tool);
-      return '<tr><td>' + photo(tool, 'inventory-thumb') + '</td><td><span class="item-name">' + esc(tool.name) + '</span><span class="item-sub">' + esc(tool.category || 'Umum') + (tool.note ? ' · ' + esc(tool.note) : '') + '</span></td>' +
-        '<td>' + Number(tool.stock) + ' unit<span class="item-sub">' + Number(tool.availableStock ?? tool.stock) + ' tersedia untuk diajukan</span></td><td>' + badge(status.label, status.kind) + '</td>' +
+      return '<tr><td>' + photo(tool, 'inventory-thumb') + '</td><td><span class="item-name">' + esc(tool.name) + '</span>' + (tool.note ? '<span class="item-sub">' + esc(tool.note) + '</span>' : '') + '</td>' +
+        '<td>' + badge(esc(tool.category || 'Umum'), 'neutral') + '</td><td>' + Number(tool.stock) + ' unit<span class="item-sub">' + Number(tool.availableStock ?? tool.stock) + ' tersedia untuk diajukan</span></td><td>' + badge(status.label, status.kind) + '</td>' +
         '<td>' + badge(esc(tool.condition), tool.condition === 'Baik' ? 'returned' : 'pending') + '</td><td><div class="action-group"><button class="button button-sm button-ghost" data-action="edit-tool" data-id="' + esc(tool.id) + '">Edit</button><button class="button button-sm button-danger" data-action="delete-tool" data-id="' + esc(tool.id) + '">Hapus</button></div></td></tr>';
     }).join('');
   }
@@ -302,8 +333,8 @@
   function renderInventory() {
     return heading('DATA PERLENGKAPAN', 'Katalog alat', 'Kelola stok, ketersediaan, dan kondisi alat laboratorium.',
       '<button class="button button-primary" type="button" data-page="tool-form">+ Tambah alat</button>') +
-      '<section class="panel"><div class="panel-heading"><div><h2>Daftar inventaris</h2><p>' + tools.length + ' jenis alat · perubahan tersimpan di spreadsheet</p></div><label class="search-box"><span>⌕</span><input id="inventory-search" type="search" placeholder="Cari alat" aria-label="Cari inventaris"></label></div>' +
-      '<div class="table-wrap"><table><thead><tr><th>FOTO</th><th>NAMA ALAT</th><th>STOK</th><th>KETERSEDIAAN</th><th>KONDISI</th><th>AKSI</th></tr></thead><tbody id="inventory-rows">' + inventoryRows(tools) + '</tbody></table></div></section>';
+      '<section class="panel"><div class="panel-heading panel-heading-categories"><div><h2>Daftar inventaris</h2><p>' + tools.length + ' jenis alat · perubahan tersimpan di spreadsheet</p></div>' + categoryFilterButtons('inventory') + '<label class="search-box"><span>⌕</span><input id="inventory-search" type="search" placeholder="Cari alat" aria-label="Cari inventaris"></label></div>' +
+      '<div class="table-wrap"><table><thead><tr><th>FOTO</th><th>NAMA ALAT</th><th>KATEGORI</th><th>STOK</th><th>KETERSEDIAAN</th><th>KONDISI</th><th>AKSI</th></tr></thead><tbody id="inventory-rows">' + inventoryRows(tools) + '</tbody></table></div></section>';
   }
 
   function renderToolForm() {
@@ -317,7 +348,7 @@
       '<section class="panel"><div class="panel-heading"><div><h2>' + (tool ? 'Perbarui alat' : 'Informasi alat baru') + '</h2><p>Data inventaris tersimpan di spreadsheet, foto di Google Drive.</p></div></div><div class="panel-body">' +
       '<form id="inventory-form" class="inventory-form">' +
       '<div class="field"><label for="tool-name">Nama alat</label><input id="tool-name" name="name" value="' + (tool ? esc(tool.name) : '') + '" maxlength="80" required></div>' +
-      '<div class="field"><label for="tool-category">Kategori</label><input id="tool-category" name="category" value="' + (tool ? esc(tool.category) : '') + '" maxlength="40" placeholder="Pengukuran"></div>' +
+      '<div class="field"><label for="tool-category">Kategori</label><select id="tool-category" name="category" required>' + toolCategoryOptions(tool ? tool.category : '') + '</select></div>' +
       '<div class="field"><label for="tool-stock">Jumlah stok</label><input id="tool-stock" name="stock" type="number" min="0" max="99999" value="' + (tool ? Number(tool.stock) : '') + '" required></div>' +
       '<div class="field"><label for="tool-condition">Kondisi</label><select id="tool-condition" name="condition"><option ' + (!tool || tool.condition === 'Baik' ? 'selected' : '') + '>Baik</option><option ' + (tool && tool.condition === 'Perlu servis' ? 'selected' : '') + '>Perlu servis</option><option ' + (tool && tool.condition === 'Rusak' ? 'selected' : '') + '>Rusak</option></select></div>' +
       '<div class="field inventory-note"><label for="tool-note">Catatan <span class="optional">opsional</span></label><input id="tool-note" name="note" value="' + (tool ? esc(tool.note) : '') + '" maxlength="120"></div>' +
@@ -393,7 +424,7 @@
     return heading('PEMINJAMAN SISWA', 'Pinjam alat', 'Pilih alat dan tentukan tanggal peminjaman.') +
       '<section class="stats-grid compact-stats">' + stat('Jenis alat tersedia', available.length, 'Disinkronkan dengan Sheets', '⌘', 'green') +
       stat('Unit dipilih', picked, 'Pada pengajuan ini', '+', 'blue') + '</section><div class="borrow-layout"><div class="borrow-main">' +
-      '<section class="panel"><div class="panel-heading"><div><h2>Katalog alat</h2><p>Semua alat inventaris ditampilkan, termasuk yang rusak atau stoknya habis.</p></div><label class="search-box"><span>⌕</span><input id="catalog-search" type="search" placeholder="Cari alat" aria-label="Cari alat"></label></div>' +
+      '<section class="panel"><div class="panel-heading panel-heading-categories"><div><h2>Katalog alat</h2><p>Semua alat inventaris ditampilkan, termasuk yang rusak atau stoknya habis.</p></div>' + categoryFilterButtons('catalog') + '<label class="search-box"><span>⌕</span><input id="catalog-search" type="search" placeholder="Cari alat" aria-label="Cari alat"></label></div>' +
       '<div id="catalog-grid" class="catalog-grid">' + renderBorrowCards(tools) + '</div></section>' +
       '<section class="panel"><div class="panel-heading"><div><h2>Periode peminjaman</h2><p>Tanggal kembali tidak boleh sebelum tanggal pinjam.</p></div></div><div class="panel-body">' +
       '<form id="loan-form" class="date-form"><div class="field"><label for="loan-start">Tanggal pinjam</label><input id="loan-start" name="startDate" type="date" min="' + today() + '" value="' + startDate + '" required></div>' +
@@ -549,6 +580,24 @@
       return;
     }
 
+    const categoryButton = event.target.closest('[data-category-filter]');
+    if (categoryButton && $('#page-content').contains(categoryButton)) {
+      const group = categoryButton.dataset.categoryFilter;
+      const category = categoryButton.dataset.categoryValue;
+      categoryButton.parentElement.querySelectorAll('[data-category-filter]').forEach((button) => {
+        const active = button === categoryButton;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+      if (group === 'catalog') {
+        $('#catalog-grid').innerHTML = renderBorrowCards(filteredTools(category, $('#catalog-search')?.value || ''));
+      } else if (group === 'inventory') {
+        $('#inventory-rows').innerHTML = inventoryRows(filteredTools(category, $('#inventory-search')?.value || ''));
+        addMobileTableLabels();
+      }
+      return;
+    }
+
     const pageLink = event.target.closest('[data-page]');
     if (pageLink && $('#app-view').contains(pageLink)) {
       event.preventDefault();
@@ -606,14 +655,10 @@
 
   $('#page-content').addEventListener('input', (event) => {
     if (event.target.id === 'catalog-search') {
-      const term = norm(event.target.value);
-      const rows = tools.filter((tool) => norm(tool.name).includes(term) || norm(tool.category).includes(term));
-      $('#catalog-grid').innerHTML = renderBorrowCards(rows);
+      $('#catalog-grid').innerHTML = renderBorrowCards(filteredTools(selectedCategory('catalog'), event.target.value));
     }
     if (event.target.id === 'inventory-search') {
-      const term = norm(event.target.value);
-      const rows = tools.filter((tool) => norm(tool.name).includes(term) || norm(tool.category).includes(term));
-      $('#inventory-rows').innerHTML = inventoryRows(rows);
+      $('#inventory-rows').innerHTML = inventoryRows(filteredTools(selectedCategory('inventory'), event.target.value));
       addMobileTableLabels();
     }
   });

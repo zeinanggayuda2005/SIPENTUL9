@@ -169,6 +169,14 @@ tbody tr:hover { background: #fcfdfc; }
 .search-box > span { position: absolute; left: 10px; color: #9ba7a0; font-size: 14px; }
 .search-box input { width: 100%; min-height: 34px; padding: 8px 10px 8px 29px; border: 1px solid #e0e7e2; border-radius: 8px; outline: none; color: var(--ink); font-size: 10px; }
 .filter-select { min-height: 34px; padding: 7px 10px; border: 1px solid #e0e7e2; border-radius: 8px; outline: none; color: #607068; background: #fff; font-size: 10px; }
+.panel-heading-categories { flex-wrap: wrap; }
+.category-filter-group { display: flex; min-width: 0; max-width: 100%; flex: 1 1 100%; align-items: center; gap: 10px; }
+.category-filter-label { flex: 0 0 auto; color: #7d8b83; font-size: 10px; font-weight: 700; }
+.category-filter-options { display: flex; min-width: 0; flex-wrap: wrap; gap: 5px; }
+.category-filter-button { min-height: 29px; padding: 6px 10px; border: 1px solid #e0e7e2; border-radius: 99px; color: #68786f; background: #fff; font-size: 9px; font-weight: 700; transition: color .16s ease, border-color .16s ease, background .16s ease, transform .16s ease; }
+.category-filter-button:hover { border-color: #b9d5c4; color: var(--green); }
+.category-filter-button:active { transform: scale(.97); }
+.category-filter-button.active { border-color: #cfe3d5; color: var(--green); background: var(--green-soft); }
 
 .inventory-form { display: grid; grid-template-columns: 1.35fr 1fr .75fr 1fr; gap: 13px; align-items: end; }
 .inventory-form .field input, .inventory-form .field select { min-height: 40px; font-size: 11px; }
@@ -188,7 +196,7 @@ tbody tr:hover { background: #fcfdfc; }
 .equipment-card.unavailable { background: #fafbfa; }
 .equipment-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 5px; }
 .equipment-icon { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 10px; color: #176b53; background: #eaf4ee; font-size: 17px; }
-.equipment-category { display: block; margin-top: 12px; color: #91a097; font-size: 9px; }
+.equipment-category { display: inline-flex; width: fit-content; align-items: center; margin-top: 12px; padding: 4px 8px; border-radius: 99px; color: #176b53; background: #eaf4ee; font-size: 9px; font-weight: 700; }
 .equipment-card h3 { min-height: 19px; margin: 5px 0 4px; color: #34473c; font: 700 12px Manrope, sans-serif; }
 .equipment-card p { overflow: hidden; min-height: 15px; margin: 0; color: #87948c; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
 .equipment-bottom { display: flex; min-height: 37px; align-items: center; justify-content: space-between; gap: 4px; margin-top: 12px; padding-top: 9px; border-top: 1px solid #edf1ee; }
@@ -349,6 +357,8 @@ tbody tr:hover { background: #fcfdfc; }
   .page-heading { align-items: stretch; flex-direction: column; gap: 12px; }
   .page-heading > .button { width: 100%; }
   .panel-heading { flex-wrap: wrap; }
+  .category-filter-group { align-items: flex-start; flex-direction: column; gap: 6px; }
+  .category-filter-options { width: 100%; }
   .panel-heading > .search-box, .panel-heading > .filter-select { width: 100%; max-width: none; }
   .inventory-form, .profile-form { grid-template-columns: minmax(0, 1fr); }
   .inventory-form .field, .inventory-note, .inventory-form .form-actions,
